@@ -7,11 +7,14 @@ public class coin : MonoBehaviour
 {
     public float velRot = 30f;
     public int value = 1;
-    GameObject play;
+    GameObject play,gmana;
+    AudioSource au;
 
     // Start is called before the first frame update
     void Start()
     {
+        au = gameObject.GetComponent<AudioSource>();
+        gmana = GameObject.Find("gameManager");
         play = GameObject.Find("player");
     }
 
@@ -23,10 +26,13 @@ public class coin : MonoBehaviour
 
     private void OnTriggerEnter(Collider ot)
     {
-        if (ot.name==play.name)
+        if (ot.CompareTag("Player"))
         {
-            Destroy(gameObject,0.1f);
-            play.GetComponent<playerControler>().Puntaje(value);
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+            gameObject.GetComponent<Collider>().enabled = false;
+            Destroy(gameObject,1f);
+            au.Play();
+            playerControler.PL.Puntaje(value);
         }
     }
 }

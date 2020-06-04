@@ -3,107 +3,63 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 public class playerControler : MonoBehaviour
 {
+    public static playerControler PL;
     public int puntos = 0, vMax = 5, vidas;
-    public Vector3 puntoAparicion;
-    public bool daño = false,vid=false;
-    public float tiempoDaño = 0.5f,tda=0;
-    getaxisMOV cm;
+     Text score;
+    Text tvida;
     // Start is called before the first frame update
     void Start()
     {
+        score = GameObject.Find("monedas").GetComponent<Text>();
+        tvida = GameObject.Find("vida").GetComponent<Text>();
+        PL = this;
         vidas = vMax;
-        tda = 0;
+        score.text = "SCORE : " + puntos;
+        tvida.text = "VIDAD : "+ vidas;
        // Debug.Log("mover con las flechas y saltar con la tecla 'R' ");
             
        // Debug.Log("vidas : " +vidas);
-        cm = gameObject.transform.GetComponent<getaxisMOV>();
-       
+    
     }
     private void Update()
     {
-        caerse();
-
-        if (daño)
+        if (score==null)
         {
-            tda = Time.time;
-            daño = false;
-        }else if(daño==false &&cm.CanMove==false)
-        {
-            if (Time.time-tda>=tiempoDaño)
-            {
-                cm.CanMove = true;
-            }
-
+            score = GameObject.Find("monedas").GetComponent<Text>();
         }
-        if (vidas<=0)
+        if (tvida==null)
         {
-           Physics.gravity= gameObject.GetComponent<getaxisMOV>().g;
-            SceneManager.LoadScene("SampleScene");
+            tvida = GameObject.Find("vida").GetComponent<Text>();
         }
+
+
+       
     }
 
-    private void OnCollisionEnter(Collision col)
+
+    public void aumentoVida(int v)
     {
-        if (col.transform.CompareTag("peligro")){
-            if (vid==true)
-            {
-                vidas -= 1;
-            }
-            HacerDaño();
-        }
-
-        if (col.transform.CompareTag("plataform"))
+        if (tvida!=null)
         {
-            gameObject.transform.parent =col.transform;
+            vidas += v;
+            tvida.text = "VIDAD : " + vidas;
         }
-
+       
     }
-    private void OnCollisionExit(Collision col)
-    {
-        if (col.transform.CompareTag("plataform"))
-        {
-            gameObject.transform.parent =null;
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag("check"))
-        {
-            Debug.Log("checkpoint");
-            other.GetComponent<Collider>().enabled = false;
-            puntoAparicion = other.transform.position+Vector3.up;
-        }
-    }
-
-
-
-    public void HacerDaño()
-    {
-        if (vidas>0) {
-            transform.position = puntoAparicion;
-            Debug.Log("vidas " + vidas);
-            daño = true;
-            cm.CanMove = false;
-        }
-    }
-
+    //se queda aquí
     public void Puntaje(int val)
     {
-        puntos += val;
-        Debug.Log("puntos : " + puntos);
+        if (score!=null)
+        {
+            puntos += val;
+            // Debug.Log("puntos : " + puntos);
+            score.text = "SCORE : " + puntos;
+        }
+        
     }
 
-    public void caerse()
-    {
-        if (gameObject.transform.position.y<=-10){
-            if (vid==true)
-            {
-                vidas -= 1;
-            }
-            HacerDaño();
-        }
-    }
+   
 }
